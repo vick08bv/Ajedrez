@@ -1,10 +1,11 @@
-import pygame
 import sys
-
 sys.path.append("..")
 
 from Interfaz import Archivos
 from Interfaz import Opciones
+
+import pygame
+
 
 #Pieza Pieza Pieza Pieza Pieza Pieza Pieza Pieza
 
@@ -14,13 +15,25 @@ class Pieza:
 
     def __init__(self, fila, columna,color):
 
+        self.tipo = "Pieza"
         self.fila = fila
         self.columna = columna
+
         # Blanco = 1; Negro = -1
         self.color = color
         self.activo = True
-        self.movimientos = 0
+
+        #Lista inicial con los movimientos máximos posibles
+        #para la pieza
+        #Cada elemento es una dirección posible
+        #Cada dirección es una lista con movimientos posibles
+        #Cada movimiento es de la forma [incrementoFila,incrementoColumna]
+        self.movimiento = []
+
+        #Movimientos válidos para la posición actual
         self.movimientosDisponibles = []
+
+        self.movimientosRealizados = 0
 
         pygame.sprite.Sprite.__init__(self)
 
@@ -29,38 +42,35 @@ class Pieza:
 
         self.fila = nuevaFila
         self.columna = nuevaColumna
-        self.movimientos += 1
+
+        self.movimientosRealizados += 1
 
 
-    def comer(self, nuevaFila, nuevaColumna, Pieza):
+    def comer(self, pieza):
 
-        Pieza.activo = False
-        self.mover(nuevaFila, nuevaColumna)
+        if pieza is None:
+            pass
 
+        else:
+            pieza.activo = False
 
-    def buscarMovimientos(self,listaMovimientos):
+            pieza.fila = -100
+            pieza.columna = -100
+
+    def set_movimientos(self,listaMovimientos):
 
         self.movimientosDisponibles.clear()
 
-        for direccion in listaMovimientos:
-            self.movimientosDisponibles.append([self.fila + direccion[0], self.columna + direccion[1]])
+        if self.activo:
+            for direccion in listaMovimientos:
+                self.movimientosDisponibles.append([self.fila + direccion[0], self.columna + direccion[1]])
 
-        self.depurarMovimientos()
 
+    def __str__(self):
 
-    def depurarMovimientos(self):
-
-        #Eliminar movimientos que se salgan del tablero
-        movimientosValidos = []
-
-        for movimiento in self.movimientosDisponibles:
-
-            if movimiento[0] in range(1,9) and movimiento[1] in range(1,9):
-                if not movimiento == [self.fila, self.columna]:
-                    movimientosValidos.append(movimiento)
-
-        self.movimientosDisponibles = movimientosValidos
-
+        cadena = "OABCDEFGH"
+        color = [" Blanco "," Negro "]
+        return self.tipo + color[(1 - self.color) // 2] + cadena[self.columna] + str(self.fila)
 
 
 #Peón Peón Peón Peón Peón Peón Peón Peón
@@ -72,21 +82,27 @@ class Peon(Pieza):
     def __init__(self, fila, columna, color):
         super().__init__(fila, columna, color)
 
+        self.tipo = "Peón"
+
+        self.movimiento = [
+            [[self.color,0],[2 * self.color, 0]]
+        ]
+
         self.imagen = pygame.image.load(
         Archivos.OpcionesPiezas[
         Opciones.ColorPiezas[
-        ((-1)*(self.color-1))//2
+        (1 - self.color)//2
         ]][0]).convert_alpha()
         self.imagen = pygame.transform.scale(
         self.imagen, (Opciones.TamanoCuadro, Opciones.TamanoCuadro))
         self.rect = self.imagen.get_rect()
 
 
-    def buscarMovimientos(self):
-        super().buscarMovimientos([[self.color,0]])
+    def set_movimientos(self):
+        super().set_movimientos([[self.color,0]])
 
         #DoblePaso
-        if self.movimientos == 0:
+        if self.movimientosRealizados == 0:
             self.movimientosDisponibles.append([self.fila + 2* self.color, self.columna])
 
 
@@ -100,18 +116,31 @@ class Caballo(Pieza):
     def __init__(self, fila, columna, color):
         super().__init__(fila, columna, color)
 
+        self.tipo = "Caballo"
+
+        self.movimiento = [
+            [[2,-1]],
+            [[2,1]],
+            [[-2,-1]],
+            [[-2,1]],
+            [[1,-2]],
+            [[1,2]],
+            [[-1,-2]],
+            [[-1,2]]
+        ]
+
         self.imagen = pygame.image.load(
         Archivos.OpcionesPiezas[
         Opciones.ColorPiezas[
-        ((-1) * (self.color - 1)) // 2
+        (1 - self.color) // 2
         ]][1]).convert_alpha()
         self.imagen = pygame.transform.scale(
             self.imagen, (Opciones.TamanoCuadro, Opciones.TamanoCuadro))
         self.rect = self.imagen.get_rect()
 
 
-def buscarMovimientos(self):
-        super().buscarMovimientos([[2,-1],[2,1],[-2,-1],[-2,1],[1,-2],[1,2],[-1,-2],[-1,2]])
+    def set_movimientos(self):
+        super().set_movimientos([[2,-1],[2,1],[-2,-1],[-2,1],[1,-2],[1,2],[-1,-2],[-1,2]])
 
 
 
@@ -124,17 +153,29 @@ class Alfil(Pieza):
     def __init__(self, fila, columna, color):
         super().__init__(fila, columna, color)
 
+        self.tipo = "Alfil"
+
+        #ArribaDerecha
+        self.movimiento.append([[paso,paso] for paso in range(1,8)])
+        #AbajoIzquierda
+        self.movimiento.append([[paso, paso] for paso in range(-1, -8,-1)])
+        #ArribaIzquierda
+        self.movimiento.append([[paso,-paso] for paso in range(1,8)])
+        #AbajoDerecha
+        self.movimiento.append([[paso, -paso] for paso in range(-1, -8,-1)])
+
         self.imagen = pygame.image.load(
         Archivos.OpcionesPiezas[
         Opciones.ColorPiezas[
-        ((-1) * (self.color - 1)) // 2
+        (1 - self.color) // 2
         ]][3]).convert_alpha()
+
         self.imagen = pygame.transform.scale(
             self.imagen, (Opciones.TamanoCuadro, Opciones.TamanoCuadro))
         self.rect = self.imagen.get_rect()
 
-    def buscarMovimientos(self):
-        super().buscarMovimientos([[paso,paso] for paso in range(-7,8)] +
+    def set_movimientos(self):
+        super().set_movimientos([[paso,paso] for paso in range(-7,8)] +
                                   [[paso,-paso] for paso in range(-7,8)])
 
 
@@ -148,17 +189,28 @@ class Torre(Pieza):
     def __init__(self, fila, columna, color):
         super().__init__(fila, columna, color)
 
+        self.tipo = "Torre"
+
+        #Arriba
+        self.movimiento.append([[paso, 0] for paso in range(1, 8)])
+        #Abajo
+        self.movimiento.append([[paso, 0] for paso in range(-1, -8, -1)])
+        #Derecha
+        self.movimiento.append([[0, paso] for paso in range(1, 8)])
+        #Izquierda
+        self.movimiento.append([[0, paso] for paso in range(-1, -8, -1)])
+
         self.imagen = pygame.image.load(
         Archivos.OpcionesPiezas[
         Opciones.ColorPiezas[
-        ((-1) * (self.color - 1)) // 2
+        (1 - self.color) // 2
         ]][5]).convert_alpha()
         self.imagen = pygame.transform.scale(
             self.imagen, (Opciones.TamanoCuadro, Opciones.TamanoCuadro))
         self.rect = self.imagen.get_rect()
 
-    def buscarMovimientos(self):
-        super().buscarMovimientos([[paso, 0] for paso in range(-7, 8)] +
+    def set_movimientos(self):
+        super().set_movimientos([[paso, 0] for paso in range(-7, 8)] +
                                   [[0, paso] for paso in range(-7, 8)])
 
 
@@ -172,17 +224,36 @@ class Dama(Pieza):
     def __init__(self, fila, columna, color):
         super().__init__(fila, columna, color)
 
+        self.tipo = "Dama"
+
+        # Arriba
+        self.movimiento.append([[paso, 0] for paso in range(1, 8)])
+        # Abajo
+        self.movimiento.append([[paso, 0] for paso in range(-1, -8, -1)])
+        # Derecha
+        self.movimiento.append([[0, paso] for paso in range(1, 8)])
+        # Izquierda
+        self.movimiento.append([[0, paso] for paso in range(-1, -8, -1)])
+        # ArribaDerecha
+        self.movimiento.append([[paso, paso] for paso in range(1, 8)])
+        # AbajoIzquierda
+        self.movimiento.append([[paso, paso] for paso in range(-1, -8, -1)])
+        # ArribaIzquierda
+        self.movimiento.append([[paso, -paso] for paso in range(1, 8)])
+        # AbajoDerecha
+        self.movimiento.append([[paso, -paso] for paso in range(-1, -8, -1)])
+
         self.imagen = pygame.image.load(
         Archivos.OpcionesPiezas[
         Opciones.ColorPiezas[
-        ((-1) * (self.color - 1)) // 2
+        (1 - self.color) // 2
         ]][6]).convert_alpha()
         self.imagen = pygame.transform.scale(
             self.imagen, (Opciones.TamanoCuadro, Opciones.TamanoCuadro))
         self.rect = self.imagen.get_rect()
 
-    def buscarMovimientos(self):
-        super().buscarMovimientos([[paso, paso] for paso in range(-7, 8)] +
+    def set_movimientos(self):
+        super().set_movimientos([[paso, paso] for paso in range(-7, 8)] +
                                   [[paso, -paso] for paso in range(-7, 8)] +
                                   [[paso, 0] for paso in range(-7, 8)] +
                                   [[0, paso] for paso in range(-7, 8)])
@@ -198,14 +269,27 @@ class Rey(Pieza):
     def __init__(self, fila, columna, color):
         super().__init__(fila, columna, color)
 
+        self.tipo = "Rey"
+
+        self.movimiento = [
+            [[1, 0]],
+            [[-1, 0]],
+            [[0, -1]],
+            [[0, 1]],
+            [[1, -1]],
+            [[1, 1]],
+            [[-1, -1]],
+            [[-1, 1]]
+        ]
+
         self.imagen = pygame.image.load(
         Archivos.OpcionesPiezas[
         Opciones.ColorPiezas[
-        ((-1) * (self.color - 1)) // 2
+        (1 - self.color) // 2
         ]][7]).convert_alpha()
         self.imagen = pygame.transform.scale(
             self.imagen, (Opciones.TamanoCuadro, Opciones.TamanoCuadro))
         self.rect = self.imagen.get_rect()
 
-    def buscarMovimientos(self):
-        super().buscarMovimientos([[1,0],[-1,0],[0,-1],[0,1],[1,-1],[1,1],[-1,-1],[-1,1]])
+    def set_movimientos(self):
+        super().set_movimientos([[1,0],[-1,0],[0,-1],[0,1],[1,-1],[1,1],[-1,-1],[-1,1]])
