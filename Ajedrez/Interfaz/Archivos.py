@@ -1,5 +1,8 @@
-
 #Fondos Fondos Fondos Fondos Fondos Fondos Fondos Fondos
+
+Seleccion = "Dibujos\Fondo_CasillaElegida.png"
+JugadasValidas = "Dibujos\Fondo_JugadaValida.png"
+Jaque = "Dibujos\Fondo_Jaque.png"
 
 pirita_Blanca = "Dibujos\Fondo_Pirita_Blanca.png"
 pirita_Dorada = "Dibujos\Fondo_Pirita_Dorada.png"
@@ -214,4 +217,3 @@ OpcionesPiezas = [
     [peon_Arcoiris,caballo_Arcoiris,caballo_Arcoiris_Izquierdo,alfil_Arcoiris,
      alfil_Arcoiris_Derecho,torre_Arcoiris,dama_Arcoiris,rey_Arcoiris]
     ]
-

@@ -9,21 +9,25 @@
 #largo = columna - 1
 #altura = 8 - fila
 
-SangriaIzq = 100
-SangriaDer = 200
-SangriaSup = 0
-SangriaInf = 0
+SangriaIzq = 20
+SangriaDer = 20
+SangriaSup = 20
+SangriaInf = 20
 
-TamanoTablero = 640
-TamanoCuadro = TamanoTablero//8
+TamanoCuadro = 80
+TamanoTablero = 8 * TamanoCuadro
 
 AnchoPantalla = TamanoTablero + SangriaDer + SangriaIzq
 AltoPantalla = TamanoTablero + SangriaSup + SangriaInf
 
+JugadorColor = 1
+
 #Primer color, segundo color
-ColorPiezas = [5,6]
+ColorPiezas = [9,2]
 #Tipo de Textura,Opcion de color
 ColorFondo = [7,0]
 
-SimetriaPiezas = False
+#Fondo de la pantalla
+FondoPantalla = (60, 10, 10)
 
+SimetriaPiezas = False

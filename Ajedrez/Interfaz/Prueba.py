@@ -3,7 +3,6 @@ import pygame
 from pygame.locals import *
 import sys
 
-
 SangriaIzq = 100
 SangriaDer = 200
 SangriaSup = 0
