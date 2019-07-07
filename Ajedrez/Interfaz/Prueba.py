@@ -1,7 +1,58 @@
 from Interfaz import Archivos
+from Interfaz import Opciones
 import pygame
+import copy
 from pygame.locals import *
 import sys
+
+l =[[2,1],[3,3],[5,2],[2,9],[1,6],[3,7]]
+w=l
+l.pop(3)
+r = l[2]
+l[2] = None
+print(w)
+print(r)
+
+pygame.init()
+
+
+screen = pygame.display.set_mode((Opciones.AnchoPantalla, Opciones.AltoPantalla))
+pygame.display.set_caption("Juego Prueba")
+
+class Perro():
+
+
+    def __init__(self, fila, columna, color):
+
+        self.tipo = "Pieza"
+        self.fila = fila
+        self.columna = columna
+
+        # Blanco = 1; Negro = -1
+        self.color = color
+        self.activo = True
+
+        self.tipo = "Perro"
+
+        self.movimiento = [
+            [[self.color,0],[2 * self.color, 0]]
+        ]
+
+        self.imagen = pygame.image.load(
+        Archivos.OpcionesPiezas[
+        Opciones.ColorPiezas[
+        (1 - self.color)//2
+        ]][0]).convert_alpha()
+
+
+    def __str__(self):
+
+        cadena = "OABCDEFGH"
+        color = [" Blanco "," Negro "]
+        return self.tipo + color[(1 - self.color) // 2] + cadena[self.columna] + str(self.fila)
+
+e=Perro(3,4,1)
+print(e)
 
 SangriaIzq = 100
 SangriaDer = 200

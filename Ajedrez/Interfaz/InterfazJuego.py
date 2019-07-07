@@ -30,15 +30,16 @@ def dibujarPantalla(juego, screen):
 
     for fila in juego.tablero.casillas:
         for casilla in fila:
-            screen.blit(casilla.imagen, (
-                Opciones.SangriaIzq + Opciones.TamanoCuadro * (casilla.columna - 1),
-                Opciones.SangriaSup + Opciones.TamanoCuadro * (8 - casilla.fila)))
-            #Dibujado de la pieza que ocupa la casilla
-            if casilla.pieza is not None:
-                if casilla.pieza.activo:
-                    screen.blit(casilla.pieza.imagen, (
+            if not (casilla.fila == 0 or casilla.columna == 0):
+                screen.blit(casilla.imagen, (
                     Opciones.SangriaIzq + Opciones.TamanoCuadro * (casilla.columna - 1),
                     Opciones.SangriaSup + Opciones.TamanoCuadro * (8 - casilla.fila)))
+                #Dibujado de la pieza que ocupa la casilla
+                if casilla.pieza is not None:
+                    if casilla.pieza.activo:
+                        screen.blit(casilla.pieza.imagen, (
+                        Opciones.SangriaIzq + Opciones.TamanoCuadro * (casilla.columna - 1),
+                        Opciones.SangriaSup + Opciones.TamanoCuadro * (8 - casilla.fila)))
 
     pygame.display.flip()
 
@@ -46,9 +47,9 @@ def dibujarPantalla(juego, screen):
 def dibujarMovimiento(juego, screen, jugada):
 
     #Casilla Origen
-    casillaOr = juego.tablero.casillas[jugada[0][0] - 1][jugada[0][1] - 1]
+    casillaOr = juego.tablero.casillas[jugada[0][0]][jugada[0][1]]
     #CasillaDestino
-    casillaDes = juego.tablero.casillas[jugada[1][0] - 1][jugada[1][1] - 1]
+    casillaDes = juego.tablero.casillas[jugada[1][0]][jugada[1][1]]
 
     for paso in range(0,Opciones.TamanoCuadro + 1,1):
 
@@ -56,16 +57,17 @@ def dibujarMovimiento(juego, screen, jugada):
 
         for fila in juego.tablero.casillas:
             for casilla in fila:
-                screen.blit(casilla.imagen, (
-                    Opciones.SangriaIzq + Opciones.TamanoCuadro * (casilla.columna - 1),
-                    Opciones.SangriaSup + Opciones.TamanoCuadro * (8 - casilla.fila)))
-                # Dibujado de la piezas fijas que ocupan las casillas
-                if casilla.pieza is not None:
-                    if casilla.pieza.activo:
-                        if not casilla.pieza == casillaDes.pieza:
-                            screen.blit(casilla.pieza.imagen, (
-                                Opciones.SangriaIzq + Opciones.TamanoCuadro * (casilla.columna - 1),
-                                Opciones.SangriaSup + Opciones.TamanoCuadro * (8 - casilla.fila)))
+                if not (casilla.fila == 0 or casilla.columna == 0):
+                    screen.blit(casilla.imagen, (
+                        Opciones.SangriaIzq + Opciones.TamanoCuadro * (casilla.columna - 1),
+                        Opciones.SangriaSup + Opciones.TamanoCuadro * (8 - casilla.fila)))
+                    # Dibujado de la piezas fijas que ocupan las casillas
+                    if casilla.pieza is not None:
+                        if casilla.pieza.activo:
+                            if not casilla.pieza == casillaDes.pieza:
+                                screen.blit(casilla.pieza.imagen, (
+                                    Opciones.SangriaIzq + Opciones.TamanoCuadro * (casilla.columna - 1),
+                                    Opciones.SangriaSup + Opciones.TamanoCuadro * (8 - casilla.fila)))
 
         screen.blit(casillaDes.pieza.imagen, (
         Opciones.SangriaIzq + Opciones.TamanoCuadro * (casillaOr.columna - 1) + paso * (casillaDes.columna - casillaOr.columna),
@@ -78,8 +80,8 @@ def dibujarMovimiento(juego, screen, jugada):
 
 def dibujarSeleccion(casillaPresionada,juego,screen):
 
-    CasillaPresionada = juego.tablero.casillas[casillaPresionada[0] - 1] \
-                    [casillaPresionada[1] - 1]
+    CasillaPresionada = juego.tablero.casillas[casillaPresionada[0]] \
+                    [casillaPresionada[1]]
 
     screen.blit(CasillaPresionada.imagen, (
         Opciones.SangriaIzq + Opciones.TamanoCuadro * (CasillaPresionada.columna - 1),
@@ -89,7 +91,7 @@ def dibujarSeleccion(casillaPresionada,juego,screen):
         if CasillaPresionada.pieza.activo:
             screen.blit(CasillaPresionada.pieza.imagen, (
                 Opciones.SangriaIzq + Opciones.TamanoCuadro * (CasillaPresionada.columna - 1),
-                Opciones.SangriaSup + Opciones.TamanoCuadro * (8 -CasillaPresionada.fila)))
+                Opciones.SangriaSup + Opciones.TamanoCuadro * (8 - CasillaPresionada.fila)))
 
     screen.blit(juego.seleccion, (
         Opciones.SangriaIzq + Opciones.TamanoCuadro * (CasillaPresionada.columna - 1),
@@ -98,12 +100,12 @@ def dibujarSeleccion(casillaPresionada,juego,screen):
     pygame.display.flip()
 
 
-def dibujarJugada(movimientos,juego,screen):
+def dibujarJugada(movimientos, juego, screen):
 
     for movimiento in movimientos:
 
-        CasillaValida = juego.tablero.casillas[movimiento[0] - 1] \
-                    [movimiento[1] - 1]
+        CasillaValida = juego.tablero.casillas[movimiento[0]] \
+                    [movimiento[1]]
 
         screen.blit(CasillaValida.imagen, (
             Opciones.SangriaIzq + Opciones.TamanoCuadro * (CasillaValida.columna - 1),
@@ -145,17 +147,21 @@ def recibirJugada(juego,screen):
             ((posicion[0] - Opciones.SangriaIzq) // Opciones.TamanoCuadro) + 1
             ]
 
-            for pieza in juego.jugadores[juego.turno % 2].piezas:
-                if [pieza.fila,pieza.columna] == casillaPresionada:
+            if casillaPresionada[0] in range(1,9) and casillaPresionada[0] in range(1,9):
 
-                    piezaSeleccionada = pieza
+                if juego.tablero.casillas[casillaPresionada[0]][casillaPresionada[1]].pieza is None:
+                    continue
+                if not juego.tablero.casillas[casillaPresionada[0]][casillaPresionada[1]].pieza.activo:
+                    continue
+                if not juego.tablero.casillas[casillaPresionada[0]][casillaPresionada[1]].pieza.color == \
+                    juego.jugadores[juego.turno % 2].color:
+                    continue
 
-                    seleccionValida = True
+                piezaSeleccionada = juego.tablero.casillas[casillaPresionada[0]][casillaPresionada[1]].pieza
 
-                    dibujarSeleccion(casillaPresionada,juego,screen)
+                dibujarSeleccion(casillaPresionada,juego,screen)
 
-            if not seleccionValida:
-                #NuevaSelección
+            else:
                 continue
 
         #Dibujado de las opciones por jugar
@@ -176,6 +182,7 @@ def recibirJugada(juego,screen):
             ]
 
             if nuevaCasillaPresionada in piezaSeleccionada.movimientosDisponibles:
+
                 jugadaValida = True
 
             #Redibujado
@@ -186,43 +193,45 @@ def recibirJugada(juego,screen):
 
 def main():
 
-
     pygame.init()
 
     borrarEventos()
 
     screen = pygame.display.set_mode((Opciones.AnchoPantalla, Opciones.AltoPantalla))
-    pygame.display.set_caption("Juego Prueba")
+    pygame.display.set_caption("Automatic Chess")
 
     juego = Juego()
 
     dibujarPantalla(juego, screen)
 
+    terminar = False
+
     while True:
 
         juego.iniciarTurno()
 
-        if (juego.turno % 2) == ((1 - Opciones.JugadorColor) // 2):
-            print("Blanco")
-        else:
-            print("Negro")
+        if juego.jugadores[juego.turno % 2].movimientosDisponibles == 0:
+            break
 
         jugada = recibirJugada(juego,screen)
-        tipoJugada = juego.set_registro(jugada)
-        juego.jugadores[juego.turno % 2].mover(jugada,juego.tablero,tipoJugada)
+
+        juego.desarrollarTurno(jugada)
+
         dibujarMovimiento(juego, screen, jugada)
 
-        for jugador in juego.jugadores:
-            for pieza in jugador.piezas:
-                if pieza is None:
-                    print("Nada")
-                else:
-                    if pieza.activo:
-                        print(pieza is juego.tablero.casillas[pieza.fila-1][pieza.columna-1])
-                        print(pieza)
-                    else:
-                        print("No activa")
+        terminar = juego.terminarTurno()
 
+        dibujarPantalla(juego, screen)
+
+
+    if terminar:
+        if (juego.turno % 2) == ((1 - Opciones.JugadorColor) // 2):
+            print("Jugador Negro ganó")
+        else:
+            print("Jugador Blanco ganó")
+    else:
+        print("Empate")
+        
 
 if __name__ == "__main__":
     main()
