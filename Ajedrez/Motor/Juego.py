@@ -38,78 +38,32 @@ class Juego:
         for jugador in self.jugadores:
             for pieza in jugador.piezas:
                 if pieza.activo:
-                    self.tablero.casillas[pieza.fila - 1][pieza.columna - 1].pieza = pieza
-
-
-    def set_registro(self,jugada):
-        #Formato de la jugada:
-        #Lista con dos listas
-        #Coordenadas de la casilla de origen
-        #Coordenadas de la casilla de destino
-
-        tipoJugada = "Ninguna"
-
-        casillaOrigen = self.tablero.casillas[jugada[0][0] - 1][jugada[0][1] - 1]
-        casillaDestino = self.tablero.casillas[jugada[1][0] - 1][jugada[1][1] - 1]
-
-        if casillaOrigen.pieza.tipo == "Rey":
-
-            if jugada[1] == [int(3.5 * (-casillaOrigen.pieza.color) + 4.5), 7]:
-                self.registro.append("O-O")
-                return "EnrroqueCorto"
-
-            if jugada[1] == [int(3.5 * (-casillaOrigen.pieza.color) + 4.5), 3]:
-                self.registro.append("O-O-O")
-                return "EnrroqueLargo"
-
-
-
-        if casillaOrigen.pieza.tipo == "Peón":
-
-            if casillaOrigen.fila == int(0.5 * casillaOrigen.pieza.color + 4.5):
-
-                if casillaOrigen.columna < 8:
-
-                    if jugada[1] == [int(1.5 * casillaOrigen.pieza.color + 4.5),
-                        casillaOrigen.pieza.columna + 1]:
-
-                        jugadaRealizada = casillaOrigen.pieza.tipo[0] + casillaOrigen.__str__() + "x" + \
-                                          casillaDestino.__str__()
-
-                        self.registro.append(jugadaRealizada)
-                        return "AlPaso"
-
-                if casillaOrigen.columna > 1:
-
-                    if jugada[1] == [int(1.5 * casillaOrigen.pieza.color + 4.5),
-                        casillaOrigen.pieza.columna -1]:
-
-                        jugadaRealizada = casillaOrigen.pieza.tipo[0] + casillaOrigen.__str__() + "x" + \
-                                      casillaDestino.__str__()
-
-                        self.registro.append(jugadaRealizada)
-                        return "AlPaso"
-
-        if casillaDestino.pieza is None:
-
-            jugadaRealizada = casillaOrigen.pieza.tipo[0] + casillaOrigen.__str__() + \
-                            casillaDestino.__str__()
-
-            tipoJugada = "Mover"
-
-        else:
-
-            jugadaRealizada = casillaOrigen.pieza.tipo[0] + casillaOrigen.__str__() + "x" + \
-                              casillaDestino.pieza.tipo[0] + casillaDestino.__str__()
-
-            tipoJugada = "Comer"
-
-        self.registro.append(jugadaRealizada)
-
-        return tipoJugada
+                    self.tablero.casillas[pieza.fila][pieza.columna].pieza = pieza
 
 
     def iniciarTurno(self):
 
             self.set_turno()
-            self.jugadores[self.turno % 2].buscarJugadas(self.tablero, self.registro)
+            if self.turno == 0:
+                self.set_piezas()
+            self.jugadores[self.turno % 2].buscarJugadas(
+                self.tablero, self.registro,self.jugadores[(self.turno + 1) % 2].piezas)
+            self.jugadores[self.turno % 2].depurarJugadas(
+                self.tablero, self.registro, self.jugadores[(self.turno + 1) % 2].piezas)
+
+
+    def desarrollarTurno(self,jugada):
+
+        tipoJugada = self.jugadores[self.turno % 2].anotarRegistro(
+            jugada, self.tablero, self.registro)
+
+        self.jugadores[self.turno % 2].mover(
+            jugada, self.tablero, tipoJugada, self.registro)
+
+
+    def terminarTurno(self):
+
+        self.jugadores[self.turno % 2].promocionarse(self.tablero, self.registro)
+
+        return self.jugadores[self.turno % 2].buscarJaque(
+            self.tablero, self.registro, self.jugadores[(self.turno + 1) % 2].piezas)

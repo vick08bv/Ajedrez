@@ -46,24 +46,16 @@ class Pieza:
         self.movimientosRealizados += 1
 
 
-    def comer(self, pieza):
+    def comer(self, pieza,longitudDeRegistro):
 
         if pieza is None:
             pass
 
         else:
-            pieza.activo = False
+            pieza.activo = not pieza.activo
 
-            pieza.fila = -100
-            pieza.columna = -100
-
-    def set_movimientos(self,listaMovimientos):
-
-        self.movimientosDisponibles.clear()
-
-        if self.activo:
-            for direccion in listaMovimientos:
-                self.movimientosDisponibles.append([self.fila + direccion[0], self.columna + direccion[1]])
+            pieza.fila = -pieza.fila - 100 * longitudDeRegistro
+            pieza.columna = -pieza.columna - 100 * longitudDeRegistro
 
 
     def __str__(self):
@@ -98,15 +90,6 @@ class Peon(Pieza):
         self.rect = self.imagen.get_rect()
 
 
-    def set_movimientos(self):
-        super().set_movimientos([[self.color,0]])
-
-        #DoblePaso
-        if self.movimientosRealizados == 0:
-            self.movimientosDisponibles.append([self.fila + 2* self.color, self.columna])
-
-
-
 #Caballo Caballo Caballo Caballo Caballo Caballo Caballo Caballo
 
 
@@ -139,11 +122,6 @@ class Caballo(Pieza):
         self.rect = self.imagen.get_rect()
 
 
-    def set_movimientos(self):
-        super().set_movimientos([[2,-1],[2,1],[-2,-1],[-2,1],[1,-2],[1,2],[-1,-2],[-1,2]])
-
-
-
 #Alfil Alfil Alfil Alfil Alfil Alfil Alfil Alfil
 
 
@@ -174,11 +152,6 @@ class Alfil(Pieza):
             self.imagen, (Opciones.TamanoCuadro, Opciones.TamanoCuadro))
         self.rect = self.imagen.get_rect()
 
-    def set_movimientos(self):
-        super().set_movimientos([[paso,paso] for paso in range(-7,8)] +
-                                  [[paso,-paso] for paso in range(-7,8)])
-
-
 
 #Torre Torre Torre Torre Torre Torre Torre Torre
 
@@ -208,11 +181,6 @@ class Torre(Pieza):
         self.imagen = pygame.transform.scale(
             self.imagen, (Opciones.TamanoCuadro, Opciones.TamanoCuadro))
         self.rect = self.imagen.get_rect()
-
-    def set_movimientos(self):
-        super().set_movimientos([[paso, 0] for paso in range(-7, 8)] +
-                                  [[0, paso] for paso in range(-7, 8)])
-
 
 
 #Dama Dama Dama Dama Dama Dama Dama Dama
@@ -252,13 +220,6 @@ class Dama(Pieza):
             self.imagen, (Opciones.TamanoCuadro, Opciones.TamanoCuadro))
         self.rect = self.imagen.get_rect()
 
-    def set_movimientos(self):
-        super().set_movimientos([[paso, paso] for paso in range(-7, 8)] +
-                                  [[paso, -paso] for paso in range(-7, 8)] +
-                                  [[paso, 0] for paso in range(-7, 8)] +
-                                  [[0, paso] for paso in range(-7, 8)])
-
-
 
 #Rey  Rey  Rey  Rey  Rey  Rey  Rey  Rey
 
@@ -290,6 +251,3 @@ class Rey(Pieza):
         self.imagen = pygame.transform.scale(
             self.imagen, (Opciones.TamanoCuadro, Opciones.TamanoCuadro))
         self.rect = self.imagen.get_rect()
-
-    def set_movimientos(self):
-        super().set_movimientos([[1,0],[-1,0],[0,-1],[0,1],[1,-1],[1,1],[-1,-1],[-1,1]])

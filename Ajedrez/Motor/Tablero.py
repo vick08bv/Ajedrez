@@ -19,12 +19,13 @@ class Casilla:
         self.imagen = pygame.image.load(
         Archivos.OpcionesFondos[
         Opciones.ColorFondo[0]
-        ][
-        Opciones.ColorFondo[1]
+        ][Opciones.ColorFondo[1]
         ][(self.fila % 2) == (self.columna % 2)]).convert()
         self.imagen = pygame.transform.scale(
             self.imagen, (Opciones.TamanoCuadro, Opciones.TamanoCuadro))
         self.rect = self.imagen.get_rect()
+
+
 
     def set_pieza(self,pieza):
         self.pieza = pieza
@@ -44,14 +45,14 @@ class Casilla:
 class Tablero:
     
     def __init__(self):
-        self.casillas = list([list([Casilla(i,j) for j in range(1,9)]) for i in range(1,9)])
+        self.casillas = list([list([Casilla(i,j) for j in range(0,9)]) for i in range(0,9)])
 
     def __str__(self):
         cadena = ""
         for fila in self.casillas:
             for casilla in fila:
                 if casilla.pieza is None:
-                    cadena += "None " + casilla.__str__() + "\n"
+                    cadena += casilla.__str__() + "\n"
                 else:
                     cadena += casilla.pieza.__str__() + "\n"
         return cadena
